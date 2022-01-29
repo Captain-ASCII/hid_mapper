@@ -124,40 +124,31 @@ void MapReader::LoadMap(const char *filename,EventMapping *map)
 			while(isspace(ptr[0]))
 				ptr++;
 
-			// ??? For some reason GCC 4.7.2-5 (Debian Wheezy) does
-			// ??? not compile properly the following statement
-			// ??? if written:
-			// ???   if ((ptr[0]!='\n') && (ptr[0]!='\0') && (ptr[0]!='#'))
-			// ??? (or am I completly stupid?)
-			if (ptr[0]!='\n') if (ptr[0]!='\0') if (ptr[0]!='#')
-			{
-				sprintf(error,"Garbage at end of line %d: %s",line,ptr);
-				throw Exception("MapReader",error);
+			if ((ptr[0]!='\n') && (ptr[0]!='\0') && (ptr[0]!='#')) {
+				sprintf(error, "Garbage at end of line %d: %s", line, ptr);
+				throw Exception("MapReader", error);
 			}
 
-			if(strncmp(key_name,"CORE::",6)==0)
-			{
-				event_type = EVENT_TYPE_CORE;
-				if(strcmp(key_name+6,"LAST_KEY")==0)
-					key = EVENT_CORE_LAST_KEY;
-				else
-				{
-					sprintf(error,"Unknown core event name at line %d",line);
-					throw Exception("MapReader",error);
-				}
-			}
-			else
-			{
-				event_type = EVENT_TYPE_KEYBOARD;
-				key = Keys::Lookup(key_name);
-				if(key<0)
-				{
-					sprintf(error,"Unknown key name at line %d",line);
-					throw Exception("MapReader",error);
-				}
-			}
+      if (strcmp(key_name, "IGNORE") != 0) {
+        if(strncmp(key_name, "CORE::", 6) == 0) {
+          event_type = EVENT_TYPE_CORE;
+          if(strcmp(key_name + 6, "LAST_KEY") == 0) {
+            key = EVENT_CORE_LAST_KEY;
+          } else {
+            sprintf(error, "Unknown core event name at line %d", line);
+            throw Exception("MapReader", error);
+          }
+        } else {
+          event_type = EVENT_TYPE_KEYBOARD;
+          key = Keys::Lookup(key_name);
+          if(key < 0) {
+            sprintf(error, "Unknown key name at line %d", line);
+            throw Exception("MapReader", error);
+          }
+        }
 
-			map->AddEvent(event_type,event,mask,event_length,key);
+        map->AddEvent(event_type, event, mask, event_length, key);
+      }
 
 			line++;
 		}
