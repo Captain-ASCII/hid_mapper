@@ -1,11 +1,11 @@
 /*
  * This file is part of hid_mapper.
- * 
+ *
  * hid_mapper is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * hid_mapper is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with hid_mapper. If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Author: Thibault Kummer <bob@coldsource.net>
  *         Sylvain Leroux <sylvain@chicoree.fr>
  */
@@ -64,7 +64,7 @@ int main(int argc,char **argv)
 	int lookup_mode = LOOKUP_MODE_NAME;
 	int wait = -1;
 	bool disable_repetition = false;
-	
+
 	// Check we are root
 	uid_t uid;
 	uid = geteuid();
@@ -73,26 +73,26 @@ int main(int argc,char **argv)
 		error("hid_mapper must be run as root\n");
 		return EXIT_FAILURE;
 	}
-	
+
 	// Init hid_device
 	init_hid_device(&hid_device);
-	
+
 	// Setup signal handler
 	signal(SIGTERM,sigterm_handler);
 	signal(SIGINT,sigterm_handler);
-	
+
 	if(argc==1)
 	{
 		print_usage();
 		return -1;
 	}
-	
+
 	if(argc==2 && strcmp(argv[1],"--list-devices")==0)
 		return lookup_hid_product(LOOKUP_MODE_NAME,0,0,0);
-	
+
 	if(argc==3 && strcmp(argv[1],"--list-devices")==0 && strcmp(argv[2],"--lookup-id")==0)
 		return lookup_hid_product(LOOKUP_MODE_ID,0,0,0);
-	
+
 	manufacturer[0] = '\0';
 	product[0] = '\0';
 	if(argc>=5)
@@ -106,7 +106,7 @@ int main(int argc,char **argv)
 			else if(strcmp(argv[i],"--disable-repetition")==0)
 				disable_repetition = true;
 		}
-		
+
 		for(int i=1;i<argc-1;i++)
 		{
 			if(strcmp(argv[i],"--manufacturer")==0)
@@ -136,28 +136,28 @@ int main(int argc,char **argv)
 			}
 		}
 	}
-	
+
 	if(manufacturer[0]=='\0' && product[0]=='\0')
 	{
 		print_usage();
 		return -1;
 	}
-	
+
 	if(mode==MODE_MAP && map_filename==0 && map_mouse_filename==0)
 	{
 		print_usage();
 		return -1;
 	}
-	
+
 	if(wait==0)
 	{
 		print_usage();
 		return -1;
 	}
-	
+
 	// Load map file
 	EventMapping *map = new EventMapping();
-	
+
 	if((mode==MODE_MAP)||(mode==MODE_LEARN))
 	{
 		if(map_filename!=0)
@@ -172,10 +172,10 @@ int main(int argc,char **argv)
 				e.Print();
 				return EXIT_FAILURE;
 			}
-			
+
 			info("Loaded map file %s",map_filename);
 		}
-		
+
 		if(map_mouse_filename!=0)
 		{
 			try
@@ -188,34 +188,34 @@ int main(int argc,char **argv)
 				e.Print();
 				return EXIT_FAILURE;
 			}
-			
+
 			info("Loaded mouse map file %s",map_mouse_filename);
 		}
 	}
-	
+
 	// Lookup for specified HID device
 	int re,max_hid_fd;
-	
+
 	if(wait>0)
 		fprintf(stderr,"Waiting device for %d second(s)\n",wait);
-	
+
 	while(true)
 	{
 		re = lookup_hid_product(lookup_mode,manufacturer,product,&hid_device);
-		
+
 		if(re>=0 || wait<=0)
 			break;
-		
+
 		wait--;
 		sleep(1);
 	}
-	
+
 	if(re<0)
 	{
 		error("Unable to find specified HID device (%s; %s)", manufacturer,product);
 		return EXIT_FAILURE;
 	}
-		
+
 	if(wait!=-1)
 	{
 		re = lookup_hid_product(lookup_mode,manufacturer,product,&hid_device);
@@ -223,11 +223,11 @@ int main(int argc,char **argv)
 	else
 	{
 		re = lookup_hid_product(lookup_mode,manufacturer,product,&hid_device);
-		
+
 	}
-	
+
 	info("Found HID device");
-	
+
 	// HID
 	re = open_hid_device(&hid_device);
 	if(re<0)
@@ -235,7 +235,7 @@ int main(int argc,char **argv)
 		error("Unable to open HID device");
 		return EXIT_FAILURE;
 	}
-	
+
 	// Setup event device
 	if(mode==MODE_MAP)
 	{
@@ -245,11 +245,11 @@ int main(int argc,char **argv)
 			error("Unable to setup event device");
 			return EXIT_FAILURE;
 		}
-		
+
 		info("Generic USB mapper driver setup");
 	}
-	
-	
+
+
 	LinkedList<event_mapping> *event_map_list;
 	const event_mapping *event_map = NULL;
 	unsigned int event_length;
@@ -265,7 +265,7 @@ int main(int argc,char **argv)
 		printf("# product : %s\n", product);
 		printf("#\n");
 	}
-	
+
 	while(1)
 	{
 		// assume two events per key pressed (down & up)
@@ -285,7 +285,7 @@ int main(int argc,char **argv)
 			continue;
 		}
 		++count;
-		
+
 		if(mode==MODE_LEARN)
 		{
 			if (event_map)
@@ -297,7 +297,7 @@ int main(int argc,char **argv)
 					printf(":%s\n", Keys::ReverseLookup(event_map->value));
 				}
 			}
-			else 
+			else
 			{
 				for(int i=0;i<event_length;i++)
 					printf("%02x ",(unsigned char)event[i]);
@@ -327,28 +327,28 @@ int main(int argc,char **argv)
 							else
 								last_key_down = last_key_code;
 							break;
-						
+
 						case EVENT_TYPE_MOUSE_X:
 							send_mouse_X_event(uinput_fd,event_map->value);
 							break;
-						
+
 						case EVENT_TYPE_MOUSE_Y:
 							send_mouse_Y_event(uinput_fd,event_map->value);
 							break;
-						
+
 						case EVENT_TYPE_CORE:
 							switch(event_map->value)
 							{
 								case EVENT_CORE_LAST_KEY:
 									if(!last_key_code)
 										break;
-									
+
 									send_key_down_event(uinput_fd,last_key_code);
 									if(disable_repetition)
 										send_key_up_event(uinput_fd,last_key_code);
 									else
 										last_key_down = last_key_code;
-									
+
 									break;
 							}
 							break;

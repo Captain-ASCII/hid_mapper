@@ -1,11 +1,11 @@
 #
 # This file is part of hid_mapper.
-# 
+#
 # hid_mapper is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # hid_mapper is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -13,10 +13,10 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with hid_mapper. If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 # Author: Thibault Kummer <bob@coldsource.net>
 #         Sylvain Leroux <sylvain@chicoree.fr>
-# 
+#
 
 #
 # On Debian systems, load the required/strongly suggested build options
@@ -65,7 +65,7 @@ install:
 	install -D --mode=644 CHANGELOG $(PREFIX)/usr/share/doc/hid-mapper/changelog
 	gzip --best $(PREFIX)/usr/share/doc/hid-mapper/changelog
 	install -D --strip $(EXEC) $(PREFIX)/usr/bin/$(EXEC)
-	
+
 	mkdir -p $(PREFIX)/usr/share/hid-mapper/
 	cp -dr --no-preserve=ownership maps $(PREFIX)/usr/share/hid-mapper/
 
