@@ -23,6 +23,7 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <stdio.h>
+#include <sys/select.h>
 
 #define SYSFS_HIDRAW_CLASS_PATH "/sys/class/hidraw"
 
