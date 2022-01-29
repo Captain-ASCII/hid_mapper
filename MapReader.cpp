@@ -105,8 +105,10 @@ void MapReader::LoadMap(const char *filename,EventMapping *map)
 
 			i = 0;
 
-			while(i<KEY_NAME_MAXLENGTH && ptr[i]!='\0' && ptr[i]!='\n' && (!isspace(ptr[i])))
-				key_name[i] = ptr[i++];
+			while(i<KEY_NAME_MAXLENGTH && ptr[i]!='\0' && ptr[i]!='\n' && (!isspace(ptr[i]))) {
+				key_name[i] = ptr[i];
+        i = i + 1;
+      }
 
 			if(i==KEY_NAME_MAXLENGTH)
 			{
