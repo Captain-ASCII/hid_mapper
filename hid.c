@@ -90,7 +90,7 @@ int lookup_hid_product(int lookup_mode,const char *manufacturer,const char *prod
 		re = readlink(filename,symlink_filename,PATH_MAX);
 		if(re>0 && re<PATH_MAX)
 		{
-			buf[re] = '\0';
+			symlink_filename[re] = '\0';
 
 			if(manufacturer==0)
 				info("Found HID device at /dev/%s",entry->d_name);
